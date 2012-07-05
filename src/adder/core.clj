@@ -1,8 +1,9 @@
 (ns adder.core
   (:use compojure.core)
   (:use hiccup.core)
-  (:use hiccup.page-helpers)
+  (:use hiccup.page)
   (:use adder.middleware)
+  (:use ring.middleware.params)
   (:use ring.middleware.file)
   (:use ring.middleware.file-info)
   (:use ring.middleware.reload)
@@ -16,8 +17,7 @@
   (not production?))
 
 (defn view-layout [& content]
-  (html
-    (doctype :xhtml-strict)
+  (html5
     (xhtml-tag "en"
       [:head
         [:meta {:http-equiv "Content-type" :content "text/html; charset=utf-8"}]
@@ -68,5 +68,6 @@
     (wrap-if development? wrap-reload '[adder.middleware adder.core])
     (wrap-bounce-favicon)
     (wrap-exception-logging)
+    (wrap-params)
     (wrap-if production?  wrap-failsafe)
     (wrap-if development? wrap-stacktrace)))
